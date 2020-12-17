@@ -1,0 +1,688 @@
+*
+* %DCL P2ZASM_INCLUDED CHAR EXT;
+* %DEACTIVATE P2ZASM_INCLUDED;
+* %IF P2ZASM_INCLUDED = '' %THEN
+* %DO;
+*/* Macro made bi-lingual on 20350. CBGEN compile date 20027         */
+*% /*
+         MACRO
+         P2ZASM &DSECT=YES,&LIST=YES,&TITLE=YES,&P2Z=YES,&P2ZX=COND,   *
+               &P2ZY=COND,&struc=COND
+                      GBLC  &P2ZASM_INCLUDED
+                      GBLC  &ZCBPRINT
+&P2ZASM_INCLUDED      SETC  'YES'
+                      AIF   ('&LIST' EQ 'NONE').P0
+                      AIF   ('&TITLE' EQ 'NO').P5
+ TITLE                'P2ZASM  - ZML Test Macro                        *
+                     '
+.P5                   ANOP
+**/ P2ZASM_1:;
+*/****START OF SPECIFICATIONS*****************************************/
+*/*                                                                  */
+*/*01* Proprietary statement:                                        */
+*/*                                                                  */
+*/*       Apache License                                             */
+*/*       Version 2.0, January 2004                                  */
+*/*                                                                  */
+*/*01* Descriptive Name: ZML Test Macro                              */
+*/*   ZML Test Macro                                                 */
+*/*                                                                  */
+*/*01* Macro Name: P2ZASM                                            */
+*/*                                                                  */
+*/*01* DSECT Name: P2Z                                               */
+*/*                                                                  */
+*/*01* Eye-Catcher: 'P2ZASM  '                                       */
+*/*02*  offset: 0                                                    */
+*/*02*  length: 8                                                    */
+*/*                                                                  */
+*/*01* Eye-Catcher: 'P2ZXASM '                                       */
+*/*02*  offset: 0                                                    */
+*/*02*  length: 8                                                    */
+*/*                                                                  */
+*/*01* Eye-Catcher: 'P2ZYASM '                                       */
+*/*02*  offset: 0                                                    */
+*/*02*  length: 8                                                    */
+*/*                                                                  */
+*/*01* Size: undefined                                               */
+*/*                                                                  */
+*/*01* Created by: n/a                                               */
+*/*                                                                  */
+*/*01* Serialization: n/a                                            */
+*/*                                                                  */
+*/*01* Function:                                                     */
+*/*    Comment test:                                                 */
+*/*        quick brown fox jumps over the lazy dog.                  */
+*/*        quick brown fox jumps over the lazy dog.                  */
+*/*        quick brown fox jumps over the lazy dog.                  */
+*/*        quick brown fox jumps over the lazy dog.                  */
+*/*        quick brown fox jumps over the lazy dog.                  */
+*/*        quick brown fox jumps over the lazy dog.                  */
+*/*        quick brown fox jumps over the lazy dog.                  */
+*/*        quick brown fox jumps over the lazy dog.                  */
+*/*                                                                  */
+*/*        quick brown fox jumps over the lazy dog.                  */
+*/*                                                                  */
+*/*01* Restrictions: n/a                                             */
+*/*                                                                  */
+*/*01* Pointed to by: n/a                                            */
+*/*                                                                  */
+*/*                                                                  */
+*/****END OF SPECIFICATIONS*******************************************/
+*% /*
+.P0                   ANOP
+                      AIF   ('&ZCBPRINT' EQ 'NO').P1
+                      AIF   ('&LIST' EQ 'YES').P2
+.P1                   ANOP
+                      PUSH  PRINT
+                      PRINT OFF
+.P2                   ANOP
+                      AIF   ('&P2Z' EQ 'NO').L0002
+                      AIF   ('&DSECT' EQ 'YES').L0003
+                      AIF   ('&P2Z' NE 'YES').L0002
+P2Z                   DS    0D     P2Z start
+                      AGO   .L0004
+.L0003                ANOP
+P2Z                   DSECT        P2Z start
+.L0004                ANOP
+P2ZID                 DS    CL8    Control Block ID - "P2ZASM "
+*
+*      ***************************************************************
+*      *                                                             *
+*      * Pointer                                                     *
+*      *                                                             *
+*      ***************************************************************
+*
+*
+P2Z_Pointer           DS    CL32   Pointer test section
+                      ORG   P2Z_Pointer
+P2Z_Pointer8          DS    AL1
+                      DS    X
+                      DS    H
+P2Z_Pointer15         DS    AL2
+P2Z_Pointer16         DS    AL2
+                      DS    X
+P2Z_Pointer24         DS    AL3
+P2Z_Pointer31         DS    A
+P2Z_Pointer32         DS    A
+                      DS    F
+P2Z_Pointer64         DS    AD
+*
+*      ***************************************************************
+*      *                                                             *
+*      * Bit                                                         *
+*      *                                                             *
+*      ***************************************************************
+*
+*
+P2Z_Bit               DS    CL16   Bit test section
+                      ORG   P2Z_Bit
+P2Z_Bit8A             DS    B
+P2Z_Bit8B             DS    B
+*  Bit definitions:
+P2Z_Bit8_0            EQU   X'80'
+P2Z_Bit8_1_2          EQU   X'60'
+P2Z_Bit8_5_7          EQU   X'0F'
+P2Z_Bit16             DS    BL2
+*  Bit definitions:
+P2Z_Bit16_0           EQU   X'80'
+P2Z_Bit16_1           EQU   X'40'
+P2Z_Bit16_2           EQU   X'20'
+P2Z_Bit16_3           EQU   X'10'
+P2Z_Bit16_4           EQU   X'08'
+P2Z_Bit16_5           EQU   X'04'
+P2Z_Bit16_6           EQU   X'02'
+P2Z_Bit16_7           EQU   X'01'
+P2Z_Bit32             DS    BL4
+                      ORG   P2Z_Bit32
+P2Z_Bit32A            DS    B
+*  Bit definitions:
+P2Z_Bit32_0           EQU   X'80'
+P2Z_Bit32B            DS    B
+                      ORG   P2Z_Bit32B
+P2Z_Bit32_8_15        DS    B
+P2Z_Bit32C            DS    B
+                      ORG   P2Z_Bit32C
+                      DS    B
+P2Z_Bit32D            DS    B
+*  Bit definitions:
+P2Z_Bit32_31          EQU   X'01'
+                      ORG   P2Z_Bit32+4
+P2Z_Bit64             DS    BL8
+                      ORG   P2Z_Bit64
+P2Z_Bit64A            DS    B
+*  Bit definitions:
+P2Z_Bit64_0           EQU   X'80'
+P2Z_Bit64_1_7         EQU   X'7F'
+P2Z_Bit64B            DS    B
+                      ORG   P2Z_Bit64B
+P2Z_Bit64_8_15        DS    B
+P2Z_Bit64C            DS    B
+                      ORG   P2Z_Bit64C
+P2Z_Bit64_16_23       DS    B
+P2Z_Bit64D            DS    B
+                      ORG   P2Z_Bit64D
+P2Z_Bit64_24_31       DS    B
+P2Z_Bit64E            DS    B
+                      ORG   P2Z_Bit64E
+P2Z_Bit64_32_39       DS    B
+P2Z_Bit64F            DS    B
+                      ORG   P2Z_Bit64F
+P2Z_Bit64_40_47       DS    B
+P2Z_Bit64G            DS    B
+                      ORG   P2Z_Bit64G
+P2Z_Bit64_48_55       DS    B
+P2Z_Bit64H            DS    B
+*  Bit definitions:
+P2Z_Bit64_56_62       EQU   X'FE'
+P2Z_Bit64_63          EQU   X'01'
+*
+*      ***************************************************************
+*      *                                                             *
+*      * Fixed                                                       *
+*      *                                                             *
+*      ***************************************************************
+*
+*
+                      ORG   P2Z_Bit+16
+P2Z_Fixed             DS    CL32   Fixed test section
+                      ORG   P2Z_Fixed
+P2Z_Fixed8            DS    X
+                      DS    X
+P2Z_Fixed15           DS    H
+P2Z_Fixed16           DS    H
+                      DS    H
+P2Z_Fixed31           DS    F
+P2Z_Fixed32           DS    F
+P2Z_Fixed63           DS    FL8
+P2Z_Fixed64           DS    FL8
+*
+*      ***************************************************************
+*      *                                                             *
+*      * Character                                                   *
+*      *                                                             *
+*      ***************************************************************
+*
+*
+P2Z_Character         DS    CL224  Character test section
+                      ORG   P2Z_Character
+P2Z_Char1             DS    CL1
+                      DS    CL1
+P2Z_Char2             DS    CL2
+P2Z_Char4             DS    CL4
+P2Z_Char8             DS    CL8
+P2Z_Char16            DS    CL16
+P2Z_Char64            DS    CL64
+P2Z_Char128           DS    CL128
+*
+*      ***************************************************************
+*      *                                                             *
+*      * ISA Usage                                                   *
+*      *                                                             *
+*      ***************************************************************
+*
+*
+P2Z_Isa               DS    CL32   ISA test section
+                      ORG   P2Z_Isa
+P2ZIsaPtr8            DS    AL1
+                      DS    X
+P2ZIsaInt15           DS    H
+P2ZIsaChar8           DS    CL8
+P2ZIsaBit8            DS    B
+                      DS    X
+                      DS    H
+P2ZIsaStruc           DS    CL16
+                      ORG   P2ZIsaStruc
+strucC8               DS    CL8
+strucF64              DS    FL8
+*
+*      ***************************************************************
+*      *                                                             *
+*      * Union Usage                                                 *
+*      *                                                             *
+*      ***************************************************************
+*
+*
+P2Z_Union             DS    CL16   Union test section
+                      ORG   P2Z_Union
+P2ZUnionL4            DS    CL4
+                      ORG   P2Z_Union
+P2ZUnionL8            DS    CL8
+                      ORG   P2Z_Union
+P2ZUnionL16           DS    CL16
+*
+*      ***************************************************************
+*      *                                                             *
+*      * Comment                                                     *
+*      *                                                             *
+*      ***************************************************************
+*
+*
+P2Z_Comment           DS    CL8    Comment test section
+                      ORG   P2Z_Comment
+P2Z_CommentL1         DS    CL1    quick brown fox jumps over the
+P2Z_CommentL2         DS    CL1    quick brown fox jumps over the lazy *
+                                   dog.
+P2Z_CommentL4         DS    CL1    quick brown fox jumps over the lazy *
+                                   dog. quick brown fox jumps over the *
+                                   lazy dog.
+P2Z_CommentL8         DS    CL1    quick brown fox jumps over the lazy *
+                                   dog. quick brown fox jumps over the *
+                                   lazy dog. quick brown fox jumps     *
+                                   over the lazy dog. quick brown fox  *
+                                   jumps over the lazy dog.
+                      DS    F
+*
+*      ***************************************************************
+*      *                                                             *
+*      * Special tags                                                *
+*      *                                                             *
+*      ***************************************************************
+*
+*
+P2Z_SpecialTag        DS    CL24   Special tag test section
+                      ORG   P2Z_SpecialTag
+P2Z_Override_F        DS    CL8    Override of the format field
+P2Z_Override_T        DS    FL8    Override of the type field
+P2Z_Reference1        DS    A      31 bit pointer with a local         *
+                                   reference
+P2Z_Reference2        DS    A      31 bit pointer with a remote        *
+                                   reference
+*
+*      ***************************************************************
+*      *                                                             *
+*      * ZML tags                                                    *
+*      *                                                             *
+*      ***************************************************************
+*
+*
+P2Z_ZMLTag            DS    CL24   ZML tag test section
+                      ORG   P2Z_ZMLTag
+P2Z_Triplet           DS    CL12   Triplet test section
+                      ORG   P2Z_Triplet
+P2Z_Triplet_offset    DS    F      Offset to the P2ZX section from the *
+                                   beginning of the record
+P2Z_Triplet_Length    DS    F      length of the P2ZX section
+P2Z_Triplet_Count     DS    F      Number of P2ZX sections
+P2Z_ProgrammingInterface DS CL8    Programming interface test section
+                      ORG   P2Z_ProgrammingInterface
+P2Z_ProgrammingInterfaceF DS CL4   Set to false
+P2Z_ProgrammingInterfaceT DS CL4   Set to true
+P2Z_ScalingFactor     DS    CL4    Scaling factor test section
+                      ORG   P2Z_ScalingFactor
+P2Z_ScalingFactor1    DS    F      Scaling factor of 16
+*
+*      ***************************************************************
+*      *                                                             *
+*      * Custom tags                                                 *
+*      *                                                             *
+*      ***************************************************************
+*
+*
+P2Z_CustomTag         DS    CL8    Custom tag test section
+                      ORG   P2Z_CustomTag
+P2Z_x_xyz_Char1       DS    CL1    Custom tag with a value of abc
+P2Z_x_xyz_Char2       DS    CL1    Custom tag with a value of "a b c"
+P2Z_x_xyz_Num1        DS    CL1    Custom tag with a value of 123
+P2Z_x_xyz_Num2        DS    CL1    Custom tag with a value of 12.34
+                      DS    F
+*
+*      ***************************************************************
+*      *                                                             *
+*      * Array Usage                                                 *
+*      *                                                             *
+*      ***************************************************************
+*
+*
+P2Z_Array             DS    0C     Array test section
+P2Z_Array1            DS    CL8    Standard Array - 10 entries
+                      ORG   P2Z_Array1
+P2Z_Array1_Char8      DS    CL8
+                      ORG   P2Z_Array1+80
+P2Z_Array2            DS    CL8    Lower bound is 5 - 5 entries
+                      ORG   P2Z_Array2
+P2Z_Array2_Char8      DS    CL8
+                      ORG   P2Z_Array2+48
+P2Z_Array3            DS    CL8    Multi dimensional - 2x3
+                      ORG   P2Z_Array3
+P2Z_Array3_Char8      DS    CL8
+                      ORG   P2Z_Array3+48
+P2Z_Array4            DS    CL8    Multi dimensional - 2x3x4x5
+                      ORG   P2Z_Array4
+P2Z_Array4_Char8      DS    CL8
+                      ORG   P2Z_Array4+960
+P2Z_Array5A           DS    CL176  Multi dimensional - 2x3
+                      ORG   P2Z_Array5A
+P2Z_Array5A_Char8     DS    CL8
+P2Z_Array5B           DS    CL8    Multi dimensional - 4x5
+                      ORG   P2Z_Array5B
+P2Z_Array5B_Char8     DS    CL8
+                      ORG   P2Z_Array5B+160
+P2Z_Array5C_Char8     DS    CL8
+                      ORG   P2Z_Array5A+1056
+P2Z_Array6            DS    CL8    Standard Array - unknown entries
+                      ORG   P2Z_Array6
+P2ZArray6_Char8       DS    CL8
+P2Z_Len               EQU   *-P2Z
+.L0002                ANOP
+                      AIF   ('&P2ZX' EQ 'NO').L0005
+                      AIF   ('&DSECT' EQ 'YES').L0006
+                      AIF   ('&P2ZX' NE 'YES').L0005
+P2ZX                  DS    0D     P2ZX start
+                      AGO   .L0007
+.L0006                ANOP
+P2ZX                  DSECT        P2ZX start
+.L0007                ANOP
+P2ZXID                DS    CL8    Control Block ID - "P2ZXASM "
+P2ZX_Array7           DS    CL8    Multi dimensional - unknown x2
+                      ORG   P2ZX_Array7
+P2ZX_Array7_Char8     DS    CL8
+P2ZX_Len              EQU   *-P2ZX
+.L0005                ANOP
+                      AIF   ('&P2ZY' EQ 'NO').L0008
+                      AIF   ('&DSECT' EQ 'YES').L0009
+                      AIF   ('&P2ZY' NE 'YES').L0008
+P2ZY                  DS    0D     P2ZY start
+                      AGO   .L000A
+.L0009                ANOP
+P2ZY                  DSECT        P2ZY start
+.L000A                ANOP
+P2ZYID                DS    CL8    Control Block ID - "P2ZYASM "
+P2ZY_CharU            DS    0C     Character test section undefined    *
+                                   length
+P2ZY_Len              EQU   *-P2ZY
+.L0008                ANOP
+                      AIF   ('&struc' EQ 'NO').L000B
+                      AIF   ('&DSECT' EQ 'YES').L000C
+                      AIF   ('&struc' NE 'YES').L000B
+struc                 DS    0D
+                      AGO   .L000D
+.L000C                ANOP
+struc                 DSECT
+.L000D                ANOP
+strucC8               DS    CL8
+strucF64              DS    FL8
+struc_Len             EQU   *-struc
+.L000B                ANOP
+                      AIF   ('&ZCBPRINT' EQ 'NO').P3
+                      AIF   ('&LIST' EQ 'YES').P4
+.P3                   ANOP
+                      POP   PRINT
+.P4                   ANOP
+.P_EXIT               ANOP
+                      MEND
+**/ P2ZASM_2:;
+* %P2ZASM_INCLUDED = 'YES';
+* %DCL ZCBPRINT CHAR EXT;
+* %DEACTIVATE ZCBPRINT;
+* %DCL P2ZASM_LIST CHAR EXT;
+* %DEACTIVATE P2ZASM_LIST;
+* %IF P2ZASM_LIST = 'NO' |
+*    ZCBPRINT = 'NO' %THEN
+* %DO;
+*   @LIST PUSH NOECHO;
+*   @LIST NOASSEMBLE NOECHO;
+*   @LIST OFF C NOECHO;
+* %END;
+*/* Start of PL/X Source                                             */
+*
+*Declare
+*  1 P2Z   BASED BDY(DWord),        /* P2Z start
+*                                                                    */
+*    3 P2ZID    Char(8),            /* Control Block ID - "P2ZASM  " */
+*
+*    /****************************************************************/
+*    /* Pointer                                                      */
+*    /****************************************************************/
+*    3 P2Z_Pointer Boundary(DWord), /* Pointer test section          */
+*      5 P2Z_Pointer8   Pointer(8),
+*      5 *              Fixed(8),
+*      5 *              Fixed(16),
+*      5 P2Z_Pointer15  Pointer(15),
+*      5 P2Z_Pointer16  Pointer(16),
+*      5 *              Fixed(8),
+*      5 P2Z_Pointer24  Pointer(24),
+*      5 P2Z_Pointer31  Pointer(31),
+*      5 P2Z_Pointer32  Pointer(32),
+*      5 *              Fixed(32),
+*      5 P2Z_Pointer64  Pointer(64),
+*
+*
+*    /****************************************************************/
+*    /* Bit                                                          */
+*    /****************************************************************/
+*    3 P2Z_Bit Boundary(DWord),     /* Bit test section              */
+*      5 P2Z_Bit8A      Bit(8),
+*      5 P2Z_Bit8B      Bit(8),
+*        7 P2Z_Bit8_0     Bit(1),
+*        7 P2Z_Bit8_1_2   Bit(2),
+*        7 *              Bit(1),
+*        7 P2Z_Bit8_5_7   Bit(4),
+*      5 P2Z_Bit16      Bit(16),
+*        7 P2Z_Bit16_0    Bit(1),
+*        7 P2Z_Bit16_1    Bit(1),
+*        7 P2Z_Bit16_2    Bit(1),
+*        7 P2Z_Bit16_3    Bit(1),
+*        7 P2Z_Bit16_4    Bit(1),
+*        7 P2Z_Bit16_5    Bit(1),
+*        7 P2Z_Bit16_6    Bit(1),
+*        7 P2Z_Bit16_7    Bit(1),
+*      5 P2Z_Bit32      Bit(32),
+*        7 P2Z_Bit32A     Bit(8),
+*          9 P2Z_Bit32_0    Bit(1),
+*          9 *              Bit(7),
+*        7 P2Z_Bit32B     Bit(8),
+*          9 P2Z_Bit32_8_15 Bit(8),
+*        7 P2Z_Bit32C     Bit(8),
+*          9 *              Bit(8),
+*        7 P2Z_Bit32D     Bit(8),
+*          9 *              Bit(7),
+*          9 P2Z_Bit32_31   Bit(1),
+*      5 P2Z_Bit64      Bit(64),
+*        7 P2Z_Bit64A     Bit(8),
+*          9 P2Z_Bit64_0     Bit(1),
+*          9 P2Z_Bit64_1_7   Bit(7),
+*        7 P2Z_Bit64B     Bit(8),
+*          9 P2Z_Bit64_8_15  Bit(8),
+*        7 P2Z_Bit64C     Bit(8),
+*          9 P2Z_Bit64_16_23 Bit(8),
+*        7 P2Z_Bit64D     Bit(8),
+*          9 P2Z_Bit64_24_31 Bit(8),
+*        7 P2Z_Bit64E     Bit(8),
+*          9 P2Z_Bit64_32_39 Bit(8),
+*        7 P2Z_Bit64F     Bit(8),
+*          9 P2Z_Bit64_40_47 Bit(8),
+*        7 P2Z_Bit64G     Bit(8),
+*          9 P2Z_Bit64_48_55 Bit(8),
+*        7 P2Z_Bit64H     Bit(8),
+*          9 P2Z_Bit64_56_62 Bit(7),
+*          9 P2Z_Bit64_63   Bit(1),
+*
+*    /****************************************************************/
+*    /* Fixed                                                        */
+*    /****************************************************************/
+*    3 P2Z_Fixed Boundary(DWord),   /* Fixed test section            */
+*      5 P2Z_Fixed8     Fixed(8),
+*      5 *              Fixed(8),
+*      5 P2Z_Fixed15    Fixed(15),
+*      5 P2Z_Fixed16    Fixed(16),
+*      5 *              Fixed(16),
+*      5 P2Z_Fixed31    Fixed(31),
+*      5 P2Z_Fixed32    Fixed(32),
+*      5 P2Z_Fixed63    Fixed(63),
+*      5 P2Z_Fixed64    Fixed(64),
+*
+*    /****************************************************************/
+*    /* Character                                                    */
+*    /****************************************************************/
+*    3 P2Z_Character,               /* Character test section        */
+*      5 P2Z_Char1      Char(1),
+*      5 *              Char(1),
+*      5 P2Z_Char2      Char(2),
+*      5 P2Z_Char4      Char(4),
+*      5 P2Z_Char8      Char(8),
+*      5 P2Z_Char16     Char(16),
+*      5 P2Z_Char64     Char(64),
+*      5 P2Z_Char128    Char(128),
+*
+*    /****************************************************************/
+*    /* ISA Usage                                                    */
+*    /****************************************************************/
+*    3 P2Z_Isa Boundary(DWord),     /* ISA test section              */
+*      5 P2ZIsaPtr8     Isa(ptr8),
+*      5 *              Fixed(8),
+*      5 P2ZIsaInt15    Isa(int15),
+*      5 P2ZIsaChar8    Isa(char8),
+*      5 P2ZIsaBit8     Isa(bit8),
+*      5 *              Fixed(8),
+*      5 *              Fixed(16),
+*      5 P2ZIsaStruc    Isa(struc),
+*
+*    /****************************************************************/
+*    /* Union Usage                                                  */
+*    /****************************************************************/
+*    3 P2Z_Union Union Boundary(DWord), /* Union test section        */
+*      5 P2ZUnionL4     Char(4),
+*      5 P2ZUnionL8     Char(8),
+*      5 P2ZUnionL16    Char(16),
+*
+*    /****************************************************************/
+*    /* Comment                                                      */
+*    /****************************************************************/
+*    3 P2Z_Comment Boundary(DWord), /* Comment test section          */
+*      5 P2Z_CommentL1  Char(1),    /* quick brown fox jumps over the*/
+*      5 P2Z_CommentL2  Char(1),    /* quick brown fox jumps over the
+*                                      lazy dog.                     */
+*      5 P2Z_CommentL4  Char(1),    /* quick brown fox jumps over the
+*                                      lazy dog.
+*                                      quick brown fox jumps over the
+*                                      lazy dog.                     */
+*      5 P2Z_CommentL8  Char(1),    /* quick brown fox jumps over the
+*                                      lazy dog.
+*                                      quick brown fox jumps over the
+*                                      lazy dog.
+*                                      quick brown fox jumps over the
+*                                      lazy dog.
+*                                      quick brown fox jumps over the
+*                                      lazy dog.                     */
+*      5 *              Fixed(32),
+*
+*    /****************************************************************/
+*    /* Special tags                                                 */
+*    /****************************************************************/
+*    3 P2Z_SpecialTag Boundary(DWord), /* Special tag test section   */
+*      5 P2Z_Override_F Char(8),    /* Override of the format field
+*                                                                    */
+*      5 P2Z_Override_T Fixed(64),  /* Override of the type field
+*                                                                    */
+*      5 P2Z_Reference1 Pointer(31), /* 31 bit pointer with a local
+*                                      reference
+*                                                                    */
+*
+*      5 P2Z_Reference2 Pointer(31), /* 31 bit pointer with a remote
+*                                      reference
+*                                                                    */
+*
+*    /****************************************************************/
+*    /* ZML tags                                                     */
+*    /****************************************************************/
+*    3 P2Z_ZMLTag Boundary(DWord),  /* ZML tag test section          */
+*      5 P2Z_Triplet,               /* Triplet test section          */
+*        7 P2Z_Triplet_offset Fixed(32), /* Offset to the
+*                                      P2ZX section from the beginning
+*                                      of the record
+*                                                                    */
+*        7 P2Z_Triplet_Length Fixed(32), /* length of the P2ZX
+*                                      section                       */
+*        7 P2Z_Triplet_Count  Fixed(32), /* Number of P2ZX
+*                                      sections                      */
+*      5 P2Z_ProgrammingInterface , /* Programming interface
+*                                      test section                  */
+*        7 P2Z_ProgrammingInterfaceF Char(4), /* Set to false
+*                                                                    */
+*        7 P2Z_ProgrammingInterfaceT Char(4), /* Set to true
+*                                                                    */
+*      5 P2Z_ScalingFactor,          /* Scaling factor test section  */
+*        7 P2Z_ScalingFactor1 Fixed(32), /* Scaling factor of 16
+*                                                                    */
+*
+*    /****************************************************************/
+*    /* Custom tags                                                  */
+*    /****************************************************************/
+*    3 P2Z_CustomTag Boundary(DWord), /* Custom tag test section     */
+*      5 P2Z_x_xyz_Char1 Char(1),   /* Custom tag with a value of abc
+*                                                                    */
+*      5 P2Z_x_xyz_Char2 Char(1),   /* Custom tag with a value of
+*                                      "a b c"
+*                                                                    */
+*      5 P2Z_x_xyz_Num1  Char(1),   /* Custom tag with a value of 123
+*                                                                    */
+*      5 P2Z_x_xyz_Num2  Char(1),   /* Custom tag with a value of 12.34
+*                                                                    */
+*      5 *              Fixed(32),
+*
+*    /****************************************************************/
+*    /* Array Usage                                                  */
+*    /****************************************************************/
+*    3 P2Z_Array Boundary(DWord),   /* Array test section            */
+*      5 P2Z_Array1(10),            /* Standard Array - 10 entries   */
+*        7 P2Z_Array1_Char8 Char(8),
+*      5 P2Z_Array2(5:10),           /* Lower bound is 5 - 5 entries */
+*        7 P2Z_Array2_Char8 Char(8),
+*      5 P2Z_Array3(2,3),           /* Multi dimensional - 2x3       */
+*        7 P2Z_Array3_Char8 Char(8),
+*      5 P2Z_Array4(2,3,4,5),       /* Multi dimensional - 2x3x4x5   */
+*        7 P2Z_Array4_Char8 Char(8),
+*
+*      5 P2Z_Array5A(2,3),          /* Multi dimensional - 2x3       */
+*        7 P2Z_Array5A_Char8 Char(8),
+*        7 P2Z_Array5B(4,5),        /* Multi dimensional - 4x5       */
+*          9 P2Z_Array5B_Char8 Char(8),
+*        7 P2Z_Array5C_Char8 Char(8),
+*      5 P2Z_Array6(*),             /* Standard Array - unknown
+*                                      entries                       */
+*        7 P2ZArray6_Char8  Char(8);
+*
+*Declare
+*  1 P2ZX BASED BDY(DWord),         /* P2ZX start
+*                                                                    */
+*    3 P2ZXID   Char(8),            /* Control Block ID - "P2ZXASM " */
+*
+*    3 P2ZX_Array7(*,2),            /* Multi dimensional - unknown x2*/
+*      5 P2ZX_Array7_Char8  Char(8);
+*
+*
+*Declare
+*  1 P2ZY BASED BDY(DWord),         /* P2ZY start
+*                                                                    */
+*    3 P2ZYID   Char(8),            /* Control Block ID - "P2ZYASM " */
+*
+*    3 P2ZY_CharU Char(*);          /* Character test section undefined
+*                                      length                        */
+*
+*/********************************************************************/
+*/* ISA Types                                                        */
+*/********************************************************************/
+*Declare
+*  ptr8    Type   Pointer(8),
+*  int15   Type   Fixed(15),
+*  char8   Type   Char(8),
+*  bit8    Type   Bit(8) Boundary(Byte),
+*
+*  1 struc   Type,
+*    3 strucC8      Char(8),
+*    3 strucF64     Fixed(64);
+*
+* @LOGIC;
+* #PRAGMA TOOL=CBGEN.
+* #USEORG.
+* #ALIGNOP.
+* #NOTUPPER.
+* #EPRAGMA.
+* @ENDLOGIC;
+*/* End of PL/X Source                                               */
+* %IF P2ZASM_LIST = 'NO' |
+*    ZCBPRINT = 'NO' %THEN
+* %DO;
+*   @LIST POP NOECHO;
+* %END;
+* %END;
