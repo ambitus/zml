@@ -1,1 +1,834 @@
-= Z Markup Language (ZML) : Specification
+= Z Markup Language (ZML) : Specification -- Draft
+:doctype: book
+:revnumber: 0.8.00
+:revremark: Working Draft
+:revdate: 2020-12-15
+:toc:
+:sectnums:
+:keywords: zlm, zos
+:imagesdir: images
+:source-highlighter: rouge
+
+:zml-schema-url: https://link.to.schema.todo
+:oas-spec-url: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.1.0.md
+
+
+[abstract]
+.Abstract
+--
+This document describes the Z Markup Language.
+The goal of this specification is to provide a common format to define control blocks on the Z platform.
+The specification aims to be compatible with the Open API specification.
+This is meant to improve access to and ease working with control block information in a wider range of tools, languages and domains.
+
+Any 3rd party is encouraged to make use if this specification to create internal or publicly available definitions for control blocks.
+--
+
+[glossary]
+== Definitions
+
+[glossary]
+tag:: A YAML tag or it's contents in a ZML document
+field:: The actual field in a control block or it's value
+property:: An entry in the `properties` tag of <<schema_objects>>
+
+== General Specifications
+
+****
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in https://tools.ietf.org/html/bcp14[BCP 14] https://tools.ietf.org/html/rfc2119[[RFC2119\]] https://tools.ietf.org/html/rfc8174[[RFC8174\]] when, and only when, they appear in all capitals, as shown here.
+****
+
+The Z Markup Language, short ZML (pronounced [zæməl] or [zi-ɛm-ɛl]), is a definition language for control blocks on the Z platform.
+It is intended to help application developers understand and access control blocks in a language agnostic manner.
+ZML is primarily intended to describe the layout of control blocks and how the values in such control blocks SHOULD be interpreted.
+Due to the open structure and it's <<relation_to_oas,relation to the Open API Specification>>, ZML MAY also be used for applications that don't directly interact with raw data.
+
+[#versioning]
+=== Versioning
+
+This specification and the described format follow the https://semver.org/spec/v2.0.0.html[Semantic Versioning 2.0.0] specification for version numbering.
+
+The `major`.`minor` version of this specification reflect the ZML feature set, while the `patch` version indicates changes that address errors.
+In general, tooling SHOULD NOT utilize the `patch` level version to check compatibility or change it's behavior depending on the `patch` level.
+
+In addition changes to the `minor` version SHALL be backward compatible to all previous versions of the same `major` version.
+Breaking changes REQUIRE a change of the `major` version.
+A ZML document specifies it's compatibility with a specific version of this document in the `zml` tag(see <<zml_object>>).
+
+=== Format
+
+A valid ZML definition MUST be valid https://yaml.org/spec/1.2/spec.html[YAML 1.2] document.
+
+A ZML document SHOULD have only one <<zml_object>> section.
+
+To reference control block structures defined in other documents, `$ref` tags SHOULD be used according to the https://json-schema.org/[JSON-Schema] definitions.
+
+All tags in a ZML document are *case-sensitive*, except where explicitly noted.
+
+A ZML document can be validated with the JSON-Schema at `{zml-schema-url}`.
+
+==== File Names & Extension
+
+Documents compatible with this specification SHOULD use the macro name that is also used in the <<info_title,`info.title`>> attribute as the file name.
+When stored as a file and the underlying system supports it, the file extension `.yaml` SHOULD be used.
+
+[#relation_to_oas]
+=== Relation to OpenAPI Specification
+
+ZML is inspired by and aims to be compatible with the {oas-spec-url}[OpenAPI Specification(OAS) 3.1.0].
+Specifically, ZML uses the `components.schemas` section to define the structure of control blocks.
+This allows all valid ZML to be referenced directly from an OAS compatible document.
+
+ZML extends OAS by introducing additional tags through {oas-spec-url}#specificationExtensions[Specification Extensions].
+All those tags are prefixed with `x-zml-*`.
+This specification MAY change OAS definitions to better represent control blocks.
+
+[#data_types]
+=== Data Types
+
+ZML extends the OAS based {oas-spec-url}#data-types[Data types] by adding platform specific values for the `format` attribute.
+Valid types are limited to `integer`, `string`, `object`, `array`, `boolean`.
+Formats not described in this section, SHOULD NOT be used in a ZML document.
+Limits to the data types available do not apply to the definition of the ZML specification itself.
+
+// Special considerations that apply when directly working with control blocks are described in <<recommendations_for_using_zml>>
+
+==== Integer
+
+The following list of formats is valid for the `integer` type.
+
+[cols="1a,3a",options="header"]
+.Available formats for the integer type
+|===
+| Format | Description
+
+2+e| [[data_format_numeric,numeric]]Numeric Integers
+| `uint8`
+| A 1-byte unsigned integer value
+
+| `int16` / `uint16`
+| A 2-byte signed or unsigned(u) integer value
+
+| `uint24`
+| A 3-byte unsigned integer value
+
+| `int32` / `uint32`
+| A 4-byte signed or unsigned(u) integer value
+
+| `int64` / `uin64`
+| A 8-byte signed or unsigned(u) integer value
+
+2+e| [[data_format_pointers,pointers]]Pointers
+| `ptr24`
+| A 3-byte pointer
+Will most likely point to a structure also defined in ZML.
+See the <<field_schema_schema>> tag for details.
+
+| `ptr31` / `ptr32`
+| A 4-byte pointer.
+Will most likely point to a structure also defined in ZML.
+See the <<field_schema_schema>> tag for details.
+
+| `ptr64`
+| A 8-byte pointer
+Will most likely point to a structure also defined in ZML.
+See the <<field_schema_schema>> tag for details.
+
+2+e| Time Formats
+| `stck`
+| A 64-bit precision time value from the time-of-day (TOD) clock obtained with the STCK instruction.
+
+See https://www.ibm.com/support/pages/zarchitecture-principles-operation[IBM z/Architecture Principles of Operation] for details.
+
+| `stcke`
+| A 128-bit precision time value from the time-of-day (TOD) clock obtained with the STCKE instruction.
+
+See https://www.ibm.com/support/pages/zarchitecture-principles-operation[IBM z/Architecture Principles of Operation] for details.
+
+2+e| Other Number Formats
+| `packed`
+| A number in Packed-Decimal Format
+
+See https://www.ibm.com/support/pages/zarchitecture-principles-operation[IBM z/Architecture Principles of Operation] for details.
+|===
+
+==== String
+
+The following list of formats is valid for the `string` type.
+
+[cols="1a,3a",options="header"]
+.Available formats for the string type
+|===
+| Format | Description
+
+| `binary`
+| A sequence of arbitrary octets.
+This format MAY be non-printable.
+
+|===
+
+If no `format` is specified the string is considered to be encoded in EBCDIC and SHOULD be printable.
+Such strings are usually left aligned and right filled with blanks.
+// See <<recommendations_for_using_zml>> for the preferred handling of strings.
+
+==== Object
+
+The following list of formats is valid for the `object` type.
+
+[cols="1a,3a",options="header"]
+.Available formats for the object type
+|===
+| Format | Description
+
+| `bitfield`
+| An `object` with the `bitfield` <<field_schema_format>> describes a special field in a control block, that SHOULD be interpreted bit-wise.
+See <<bitfield_schema_object>> for details.
+
+|===
+
+== Schema
+
+This section describes the structure of valid ZML documents.
+
+Fields in the following section SHOULD be considered OPTIONAL, if they are not explicitly marked as *REQUIRED* and do not imply a requirement with MUST or SHALL in the description.
+
+[#zml_object]
+=== ZML Object
+
+This is the root object of a ZML document.
+Every valid ZML document MUST have exactly one <<zml_object>> at the root level.
+
+==== ZML Object Fields
+
+[cols="1a,1a,3a",options="header"]
+.Fields of root ZML schema
+|===
+| Tag | Type | Description
+
+| [[zml_spec_version]]zml
+| `string`
+| *REQUIRED*. This string MUST be the <<versioning,version number>> of the ZML Specification that the ZML document uses. The `zml` field SHOULD be used by tooling to interpret the ZML document. This is *not* related to the Control Block <<info_version,`info.version`>> string.
+
+| info | <<info_object>>
+| *REQUIRED*. Provides metadata about the Control Block. The metadata MAY be used by tooling as required.
+
+| components | <<components_object>>
+| *REQUIRED*. An element to hold the schema of the document.
+
+| externalDocs | <<external_documentation_object>>
+| Additional external documentation.
+|===
+
+This object MAY be extended (See <<extending_the_specification>>).
+
+==== ZML Object Example
+
+.Example of top level ZML object
+[source,yaml,subs=attributes+]
+----
+zml: "{revnumber}"
+info: ...
+components: ...
+externalDocs: https://docs.for.this.zml.doc
+----
+
+[#info_object]
+=== Info Object
+
+The object provides metadata about the macro.
+The metadata MAY be used by clients if needed, and MAY be presented in editing or documentation generation tools for convenience.
+
+==== Info Object Fields
+
+[cols="1a,1a,3a",options="header"]
+.Fields of Info Object
+|===
+| Tag | Type | Description
+
+| [[info_title,tile]]title | `string`
+| **REQUIRED**
+
+Control block name, same as the file name without `.yaml`.
+
+| summary | `string` | Short summary of the Macro. 
+
+| description | `string`
+| A short description of the Control Block. 
+https://spec.commonmark.org/[CommonMark syntax] MAY be used for rich text representation.
+
+| termsOfService | `string`
+| A URL to the Terms of Service for the macro.
+
+* MUST be a URL [https://tools.ietf.org/html/rfc3986#section-1.1.3[RFC3986]].
+
+| contact | <<contact_object>>
+| The contact information for the macro.
+
+| license | <<license_object>>
+| The license information for the macro.
+
+| [[info_version,version]]version | `string`
+| **REQUIRED**
+
+The version of the ZML document.
+This is distinct from the <<zml_spec_version,ZML specification version>> or the API implementation version).
+
+* MUST be a <<versioning,semantic version number>>
+
+| [[zml_generator,x-zml-generator]]x-zml-generator | `string`
+| Name of the Tool used to generate the ZML file.
+
+| x-zml-generator-version | `string`
+| Version of the tool specified with <<zml_generator>>.
+
+* MUST be a <<versioning,semantic version number>>
+
+| x-zml-generation-date | `string`
+| Date the ZML file was last generated or updated.
+
+* SHOULD be a valid ISO 8601
+
+|===
+
+This object MAY be extended (See <<extending_the_specification>>).
+
+==== Info Object Example
+
+.Example of Info Object
+[source,yaml,subs=attributes+]
+----
+zml: "{revnumber}"
+info:
+  title: P2ZASM
+  summary: >
+    ZML Test Macro
+  description: >
+    quick brown fox jumps over the lazy dog.
+    quick brown fox jumps over the lazy dog.
+    quick brown fox jumps over the lazy dog.
+  contact:
+    name: Example Corp.
+    url: https://www.example.com/contact
+    email: info@example.com
+  license:
+    identifier: Apache-2.0
+    name: >
+      Apache License
+      Version 2.0, January 2004
+    url: https://www.example.com/license-information
+  version: 1.0.0
+  x-zml-generator: plxmap-plx2zml
+  x-zml-generator-version: 0.8.00
+  x-zml-generation-date: 2020-12-15                             
+----
+
+
+[#contact_object]
+=== Contact Object
+
+Holds information about who to contact about issues or questions about this macro.
+
+[cols="1a,1a,3a",options="header"]
+.Fields of Contact Object
+|===
+| Tag | Type | Description
+| name | `string` | The name of the contact.
+| url | `string` | URL to contact page.
+| email | `string` | The email address of the contact. 
+|===
+
+This object MAY be extended (See <<extending_the_specification>>).
+
+[#license_object]
+=== License Object
+
+Holds license information about this macro.
+
+[cols="1a,1a,3a",options="header"]
+.Fields of License Object
+|===
+| Tag | Type | Description
+| name | `string`
+| *REQUIRED*
+
+The name of the license.
+
+| identifier | `string` | An https://spdx.org/licenses/[SPDX] license identifier.
+| url | `string` | URL for license information.
+|===
+
+This object MAY be extended (See <<extending_the_specification>>).
+
+[#components_object]
+=== Components Object
+
+In ZML the `schemas` field MUST be defined. Other component definitions like `responses` or `examples` serve no purpose in the context of ZML and MUST NOT be used.
+
+[cols="1a,1a,3a",options="header"]
+.Fields of Components Object
+|===
+| Tag | Type | Description
+
+| [[components_schemas,schemas]]schemas | Map [<<control_block_schema_object>>]
+| *REQUIRED*. A Object to hold <<control_block_schema_object,Control Block Schemas>>.
+The key of each entry SHOULD be the name of the control block it describes.
+|===
+
+This object MAY be extended (See <<extending_the_specification>>).
+
+[#schema_objects]
+=== Schema Objects
+
+The ZML Schema Objects define the structure of a control block and it's fields and are an extended subset of the https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#schemaObject[OAS Schema Object].
+To make this specification clearer, different types of Schema Objects are defined in this section.
+Only the properties defined in this section MAY be used in the corresponding ZML Schema Objects.
+
+[#control_block_schema_object]
+==== Control Block Schema Object
+A <<control_block_schema_object>> MUST be a direct child of the <<components_schemas, `components.schemas`>> and is the entry point to defining a control block.
+
+[cols="1a,1a,3a",options="header"]
+.Tags of the Control Block Schema Object
+|===
+| Tag | Type | Description
+
+3+e| Tags inherited from https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#schemaObject[OAS Schema Object]
+| [[control_block_schema_type,type]]type | `string`
+| *REQUIRED*
+
+The type if the control block.
+MUST be `object` (see <<data_types>>).
+
+| [[control_block_schema_properties,properties]]properties | Map[<<field_schema_object>>]
+| *REQUIRED* 
+A map defining the fields of the control block.
+
+The key in the map MUST be the name of the field in the control block.
+
+| description | `string`
+| Description for the control block mapped by this Schema Object.
+https://spec.commonmark.org/[CommonMark syntax] MAY be used for rich text representation.
+
+3+e| ZML Schema Tags
+| [[control_block_schema_zml_size,x-zml-size]]x-zml-size | `integer`
+| Size of the control block in bytes if applicable.
+
+| [[control_block_schema_zml_offset,x-zml-offset]]x-zml-offset | `integer`
+| Offset of the control block in bytes if applicable.
+If not set, the offset is considered to be 0.
+
+| x-zml-programming-interface | `boolean`
+| *REQUIRED* 
+Intended or not intended as a programming interface.
+The default value is `false`.
+
+|===
+
+This object MAY be extended (See <<extending_the_specification>>).
+
+[#field_schema_object]
+==== Field Schema Object
+The <<field_schema_object>> defines a field in a control block or a subfield of another field.
+
+[cols="1a,1a,3a",options="header"]
+.Tags of the Field Schema Object
+|===
+| Tag | Type | Description
+
+3+e| Tags inherited from https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#schemaObject[OAS Schema Object]
+| [[field_schema_type,type]]type | `string`
+| *REQUIRED*
+
+The type of the field.
+MUST be a valid type, as defined in <<data_types>>.
+
+| [[field_schema_format,format]]format| `string`
+| Format of the field.
+MUST be a valid format for the specified <<field_schema_type>> as defined in <<data_types>>.
+
+| [[field_schema_properties,properties]]properties | Map[<<field_schema_object>>] \| Map[<<bitfield_schema_object>>]
+| A map defining the sub-fields of the field.
+MAY be used if <<field_schema_type>> is `object`.
+
+The map MUST contain <<bitfield_schema_object,Bit-Field Schema Objects>> if the <<field_schema_format>> is `bitfield`.
+
+The key in the map MUST be the name of the sub-field.
+
+| description | `string`
+| Description for the field mapped by this Schema Object.
+https://spec.commonmark.org/[CommonMark syntax] MAY be used for rich text representation.
+
+| items | <<field_schema_object>> \| <<reference_object>> 
+| Schema to map the elements of an array.
+MUST be specified if <<field_schema_type>> is `array`.
+
+If a <<reference_object>> is used it SHOULD point to a <<control_block_schema_object>>.
+
+| maxItems | `integer`
+| Maximum number of elements in an array.
+MAY be used if <<field_schema_type>> is `array` and MUST be a positive integer.
+
+If this tag is set an application MAY interpret it as the real number if elements in memory.
+The elements MAY not be filled but are always allocated.
+
+If `maxItems` is not set, the array has an undefined number if elements.
+Such arrays can only be used as the last field of a control-block.
+
+3+e| ZML Schema Tags
+| [[field_schema_zml_size,x-zml-size]]x-zml-size | `integer`
+| Size of the field in bytes.
+This field SHOULD be specified if possible but MUST be specified if <<field_schema_type>> is `integer`.
+
+If not set, the size of the field depends on or is a dynamically sized array or string.
+Fields without a size and <<field_schema_type>> `string` or `array` can only be used at the end of a control-block.
+
+| [[schema_zml_offset,x-zml-offset]]x-zml-offset | `integer`
+| Relative offset of the field in it's parent in bytes.
+If the parent is a <<control_block_schema_object>> this offset is absolute.
+
+If not set, the offset is considered to be 0.
+
+| x-zml-union | `boolean`
+| Indicates that the <<field_schema_properties>> of the object all start at offset 0.
+This specification does not provide a definition of the currently valid <<field_schema_properties,property>> of the union.
+
+MUST only be used if <<field_schema_type>> is `object`.
+
+| x-zml-scaling-factor | `number`
+| Indicates that the field was scaled by this value before being written to the control block.
+To retrieve the correct value an application MAY divide the extracted value by this factor.
+
+MUST only be used if <<field_schema_type>> is `integer` and <<field_schema_format>> is <<data_format_numeric>>.
+
+| x-zml-triplet | <<triplet_object>>
+| Markes the field defined by this Schema Object to be the `offset` value of a triplet (see <<triplet_object>>).
+
+MUST only be used if <<field_schema_type>> is `integer` and <<field_schema_format>> is <<data_format_numeric>>.
+
+| [[field_schema_schema,x-zml-schema]]x-zml-schema | <<reference_object>>
+| Defines a reference to a <<control_block_schema_object>> that maps the structure this field points to.
+
+This tag MAY be defined if <<field_schema_format>> is a <<data_format_pointers,pointer>>.
+
+| [[field_schema_interpretation,x-zml-interpretation]]x-zml-interpretation | Map
+| Defines a mapping to define alternative interpretations of the specified field.
+MUST NOT be used if <<field_schema_type>> is `object` or `array`.
+
+| x-zml-programming-interface | `boolean`
+| Intended or not intended as a programming interface.
+The default value is `false`.
+|===
+
+This object MAY be extended (See <<extending_the_specification>>).
+
+[#bitfield_schema_object]
+==== Bit-Field Schema Object
+Bit-Fields are values in a control block that MAY be interpreted bit-wise.
+Such fields have a parent field with the <<field_schema_type>> `object` and <<field_schema_format>> `bitfield`.
+
+[cols="1a,1a,3a",options="header"]
+.Tags of the Bit-Field Schema Object
+|===
+| Tag | Type | Description
+
+3+e| Tags inherited from https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#schemaObject[OAS Schema Object]
+| [[bitfield_schema_type,type]]type | `string`
+| *REQUIRED*
+
+The type if the bit-field.
+MUST be `string` or `integer` as defined in <<data_types>>.
+
+| description | `string`
+| Description for the field mapped by this Schema Object.
+https://spec.commonmark.org/[CommonMark syntax] MAY be used for rich text representation.
+
+3+e| ZML Schema Tags
+| [[bitfield_schema_zml_bit_size,x-zml-bit-size]]x-zml-bit-size | `integer`
+| *REQUIRED*
+Size if the bit-field in bits.
+
+| [[bitfield_schema_zml_bit_offset,x-zml-bit-offset]]x-zml-bit-offset | `integer`
+| *REQUIRED*
+Offset of the bit-field from the parent field in bits.
+
+| [[bitfield_schema_interpretation,x-zml-interpretation]]x-zml-interpretation | <<interpretation_object>>
+| A mapping to define alternative interpretations of the specified field.
+
+| x-zml-programming-interface | `boolean`
+| Intended or not intended as a programming interface.
+The default value is `false`.
+|===
+
+If a bit-field has the <<bitfield_schema_type>> `integer` the `x-zml-bit-size` tag specifies the size of the integer value in bit.
+Such fields MUST be interpreted as *unsigned* integers.
+
+If a bit-field has the <<bitfield_schema_type>> `boolean` a `x-zml-bit-size` of `1` MUST be used.
+
+The methods employed to extract the value of such fields is not described in this specification.
+// (See <<recommendations_for_using_zml>>).
+
+This object MAY be extended (See <<extending_the_specification>>).
+
+
+==== Examples
+
+.Example of a simple Control Block Schema
+[source,yaml,subs=attributes+]
+----
+[...]
+components:
+   schemas:
+      SampleControlBlock:
+         type: object
+         description: >
+            P2ZX start
+         x-zml-offset: 0
+         x-zml-size: 8
+         properties:
+            Char8Field1:
+               type: string
+               description: >
+                  A 8 Character EBCDIC Field
+               x-zml-offset: 0
+               x-zml-size: 8
+            EmptyCharField:
+               type: string
+               description: >
+                  Character test section
+               x-zml-offset: 8
+               x-zml-size: 0 
+[...]                        
+----
+
+.Example of a multi dimensional Array of unknown size
+[source,yaml,subs=attributes+]
+----
+[...]
+ArrayField:
+   type: array
+   description: >
+      Multi dimensional - unknown x2
+   x-zml-offset: 8
+   items:
+      type: array
+      maxItems: 2
+      x-zml-size: 16
+      items:
+         type: object
+         x-zml-size: 8
+         properties:
+            Char8Field:
+               type: string
+               x-zml-offset: 0
+               x-zml-size: 8
+[...]                        
+----
+
+.Example of a bitfield
+[source,yaml,subs=attributes+]
+----
+[...]
+SampleBitField:
+   type: object
+   format: bitfield
+   x-zml-offset: 1
+   x-zml-size: 1
+   properties:
+      Bit0:
+         type: boolean
+         x-zml-bit-offset: 0
+         x-zml-bit-size: 1
+      Integer1:
+         type: integer
+         x-zml-bit-offset: 1
+         x-zml-bit-size: 2
+      Integer2:
+         type: integer
+         x-zml-bit-offset: 4
+         x-zml-bit-size: 4
+[...]                        
+----
+
+[#interpretation_object]
+=== Interpretation Object
+
+The `x-zml-interpretation` tag is used to give application developers a hint about the meaning of a fields value.
+The tag MUST hold an `object` that maps the field values to alternative representations.
+
+[cols="1a,1a,3a",options="header"]
+.Tags of Interpretation Object
+|===
+| Tag | Type | Description
+
+| ^.* | string
+| *REQUIRED* Key-value pairs to map field values.
+See <<interpretation_keys>> for additional requirements.
+
+| [[interpretation_object_default,default]]default | string
+| The fallback mapping for values not matched by any other key-value pair.
+
+|===
+
+[#interpretation_keys]
+==== Interpretation Keys
+
+If the `type` of the parent object is `integer`, the keys of `x-zml-interpretation` MAY be in binary, hexadecimal or decimal representation.
+
+[horizontal]
+binary:: prefixed with `0b` (e.g. `0b0110`)
+hexadecimal:: prefixed with `0x` (e.g. `0xFF`)
+decimal:: no prefix (e.g. `10`)
+
+The used representation SHOULD NOT change for a single `x-zml-interpretation` tag.
+A possible value of a field MAY be missing from `x-zml-interpretation`, even if <<interpretation_object_default>> is not set.
+The behavior of a using application in such cases is not a concern of this specification.
+// (See <<recommendations_for_using_zml>>).
+
+.Example for x-zml-interpretation for type string
+[source,yaml]
+----
+[...]
+type: string
+x-zml-interpretation:
+  aaa: "Meaning of the aaa value"
+  bbb: "Meaning og the bbb value"
+[...]
+----
+
+.Example for x-zml-interpretation for type integer
+[source,yaml]
+----
+[...]
+type: integer
+x-zml-interpretation:
+  0b01: "First interpretation"
+  0b10: "Second interpretation"
+[...]
+----
+
+.Example for x-zml-interpretation for type integer with *mixed* value representations.
+[source,yaml]
+----
+[...]
+type: integer
+x-zml-interpretation:
+  0b01: "First interpretation"
+  # This is discouraged
+  2: "Second interpretation"
+[...]
+----
+
+[#triplet_object]
+=== Triplet Object
+The Triplet Object is used to define a variable section in a control block.
+Each triplet consists of three fields (offset, length and number).
+Together the fields define the location and number of sections in the control block.
+
+The `x-zml-triplet` tag MUST NOT be defined for a field other then the offset.
+The tag then defines a reference to the length and number fields as well as the <<control_block_schema_object>> used to map each section of the triplet.
+
+Notice that the triplet information is part of the control block and MUST be extracted by an application each time, to calculate the offsets correctly.
+An application MUST NOT assume the triplets to be the same for each control block.
+
+[cols="1,2,3",options="header"]
+.Tags of the Triplet Object
+|===
+| Tag | Type | Description
+
+| schema | <<reference_object>>
+| *Required* Reference to the <<control_block_schema_object>> mapping the structure pointed to by the triplet.
+
+| length | <<reference_object>>
+| Reference to the field holding the length of each element pointed to by the triplet.
+The reference MUST point to a property at the same level of the parent of this Triplet Object.
+
+| number | <<reference_object>>
+| Reference to the field holding the number of elements pointed to by the triplet.
+The reference MUST point to a property at the same level of the parent of this Triplet Object.
+
+|===
+
+This object MAY be extended (See <<extending_the_specification>>).
+
+.Example of a Triplet Object
+[source,yaml,subs=attributes+]
+----
+[...]
+TripletSample:
+   type: object
+   ...
+   properties:
+      Triplet_Offset:
+         type: integer
+         ...
+         x-zml-triplet:
+            schema:
+               $ref: "#/components/schemas/TripletSchema"
+            length:
+               $ref: "#/components/schemas/TripletSample/properties/Triplet_Length"
+            number:
+               $ref: "#/components/schemas/TripletSample/properties/Triplet_Count"
+      Triplet_Length:
+         type: integer
+         ...
+      Triplet_Count:
+         type: integer
+         ...
+TripletSchema: ...
+[...]                        
+----
+
+[#external_documentation_object]
+=== External documentation Object
+
+Allows referencing an external resource for extended documentation.
+
+[cols="1a,1a,3a",options="header"]
+.Tags of the Reference Object
+|===
+| Tag | Type | Description
+
+| description | string
+| A short description of the Documentation. 
+https://spec.commonmark.org/[CommonMark syntax] MAY be used for rich text representation.
+
+| url | string
+| A URL to the Documentation.
+
+* MUST be a URL [https://tools.ietf.org/html/rfc3986#section-1.1.3[RFC3986]].
+
+|===
+
+[#reference_object]
+=== Reference Object
+
+A simple object to allow referencing other components in the ZML document, internally or externally.
+#TODO: z/OS specific resource resolution for Datasets?#
+
+The Reference Object is defined by https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03[JSON Reference] and follows the same structure, behavior and rules.
+
+[cols="1a,1a,3a",options="header"]
+.Tags of the Reference Object
+|===
+| Tag | Type | Description
+
+| $ref | string
+| *Required* The reference String
+
+|===
+
+This object MUST NOT be extended (See <<extending_the_specification>>).
+
+[#extending_the_specification]
+=== Extending the Specification
+
+As the OAS, ZML documents MAY be extended by using tags prefixed with `x-`.
+A extension to ZML MUST NOT use the prefix `x-zml`, as it is reserved for tags introduced by this specification.
+
+[appendix]
+== Example ZML File
+
+[source,yaml]
+----
+include::../../examples/P2ZASM.yaml[]
+----

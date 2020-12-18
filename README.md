@@ -55,7 +55,7 @@ P2Z_Reference:
         $ref: "p2zasm.yaml#/components/schemas/p2z"
 ````
 
-Finally, a ZML validator validates the document, to ensure that it follows the definition in the [ZML Specification](./ZML-Specification/ZML-Specification.adoc).
+Finally, a ZML validator validates the document, to ensure that it follows the definition in the [ZML Specification](./ZML-Specification/draft/ZML-Specification.adoc).
 
 ## Tooling
 
