@@ -1,0 +1,42 @@
+---
+#
+# Copyright Contributors to the Ambitus Project.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+definitions:
+  NumericIntFormats:
+    enum:
+      - uint8
+      - int16
+      - uint16
+      - uint24
+      - int32
+      - uint32
+      - int64
+      - uint64
+  PointerFormats:
+    enum:
+      - ptr24
+      - ptr31
+      - ptr32
+      - ptr64
+  TimeFormats:
+    enum:
+      - stck
+      - stcke
+  OtherIntFormats:
+    enum:
+      - packed
+  IntegerFormats:
+    anyOf:
+      - $ref: "#/definitions/NumericIntFormats"
+      - $ref: "#/definitions/PointerFormats"
+      - $ref: "#/definitions/TimeFormats"
+      - $ref: "#/definitions/OtherIntFormats"
+  StringFormats:
+    enum:
+      - binary
+  ObjectFormats:
+    enum:
+      - bitfield

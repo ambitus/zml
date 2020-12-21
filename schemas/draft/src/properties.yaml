@@ -1,0 +1,262 @@
+---
+#
+# Copyright Contributors to the Ambitus Project.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+definitions:
+  # ---------------------------------------------------------------------------- #
+  #                                 Control Block                                #
+  # ---------------------------------------------------------------------------- #
+
+  ControlBlock:
+    description: Control Block
+    type: object
+    properties:
+      type:
+        const: object
+      x-zml-programming-interface:
+        description: Specifies if a control block is intended as a programming interface
+        type: boolean
+      description:
+        description: Description for the control block
+        type: string
+      properties:
+        description: Fields of the control block
+        type: object
+        additionalProperties:
+          oneOf:
+            - $ref: "#/definitions/NormalProperty"
+      x-zml-size:
+        description: Size of the the control block
+        type: integer
+        minimum: 0
+      x-zml-offset:
+        description: Offset of the control block
+        type: integer
+        minimum: 0
+    required:
+      - type
+      - x-zml-programming-interface
+    patternProperties:
+      "^x-(?!zml)": true
+    additionalProperties: false
+
+  # ---------------------------------------------------------------------------- #
+  #                                NormalProperty                                #
+  # ---------------------------------------------------------------------------- #
+
+  NormalProperty:
+    description: Field
+    allOf:
+      - type: object
+        properties:
+          type:
+            description: Type of the field
+            type: string
+            enum:
+              - object
+              - string
+              - integer
+              - boolean
+              - array
+          format:
+            description: Format of the field
+            type: string
+          description:
+            description: Description for the field
+            type: string
+          x-zml-size:
+            description: Size of the field in bytes
+            type: integer
+            minimum: 0
+          x-zml-offset:
+            description: Relative offset from the parent in bytes
+            type: integer
+            minimum: 0
+          x-zml-programming-interface:
+            description: Specifies if a field is intended as a programming interface
+            type: boolean
+        required:
+          - type
+      - allOf:
+          # ---------------------------- If type is integer ---------------------------- #
+          - if: { properties: { type: { const: integer } } }
+            then:
+              properties:
+                format:
+                  $ref: "formats.yaml#/definitions/IntegerFormats"
+                x-zml-scaling-factor:
+                  description: The factor the field was multiplied with, before being written to the control block
+                  type: integer
+                x-zml-interpretation:
+                  $ref: "#/definitions/InterpretationObjectInteger"
+              required:
+                - x-zml-size
+          # ----------------------------- If type is string ---------------------------- #
+          - if: { properties: { type: { const: string } } }
+            then:
+              properties:
+                format:
+                  $ref: "formats.yaml#/definitions/StringFormats"
+                x-zml-interpretation:
+                  $ref: "#/definitions/InterpretationObjectString"
+          # ----------------------------- If type is array ---------------------------- #
+          - if: { properties: { type: { const: array } } }
+            then:
+              properties:
+                items:
+                  oneOf:
+                    - $ref: "#/definitions/NormalProperty"
+                    - $ref: "#/definitions/ReferenceObject"
+                maxItems:
+                  description: Maximum number of items in the array. If set this specifies the size of the array in memory
+                  type: integer
+                  minimum: 0
+              required:
+                - items
+          # ----------------------------- If type is object ---------------------------- #
+          - if: { properties: { type: { const: object } } }
+            then:
+              allOf:
+                - properties:
+                    format:
+                      $ref: "formats.yaml#/definitions/ObjectFormats"
+                    x-zml-union:
+                      type: boolean
+                      description: Indicates that the properties of the object all start at offset 0
+                  required:
+                    - "properties"
+                # -------------------------- If object has no format ------------------------- #
+                - if: { properties: { format: false } }
+                  then:
+                    properties:
+                      properties:
+                        type: object
+                        additionalProperties:
+                          $ref: "#/definitions/NormalProperty"
+                  else:
+                    allOf:
+                      # --------------------------- If format is bitfield -------------------------- #
+                      - if: { properties: { format: { const: bitfield } } }
+                        then:
+                          properties:
+                            properties:
+                              type: object
+                              additionalProperties:
+                                $ref: "#/definitions/BitfieldProperty"
+          # -------------------------- If format is a pointer -------------------------- #
+          - if:
+              properties:
+                format: { $ref: "formats.yaml#/definitions/PointerFormats" }
+            then:
+              properties:
+                x-zml-schema:
+                  oneOf:
+                    - $ref: "#/definitions/ReferenceObject"
+                    - $ref: "#/definitions/NormalProperty"
+          # -------------------------- If format is an integer ------------------------- #
+          - if:
+              properties:
+                format: { $ref: "formats.yaml#/definitions/NumericIntFormats" }
+            then:
+              properties:
+                x-zml-triplet:
+                  $ref: "#/definitions/TripletObject"
+
+  # ---------------------------------------------------------------------------- #
+  #                               BitfieldProperty                               #
+  # ---------------------------------------------------------------------------- #
+
+  BitfieldProperty:
+    description: Bit-Field
+    type: object
+    properties:
+      type:
+        description: Type of the bit-field
+        type: string
+        enum:
+          - integer
+          - boolean
+      description:
+        description: Description for the bit-field
+        type: string
+      x-zml-bit-size:
+        description: Size of the field in bits
+        type: integer
+        minimum: 0
+      x-zml-bit-offset:
+        description: Offset from the beginning of the parent field in bits
+        type: integer
+        minimum: 0
+      x-zml-programming-interface:
+        description: Specifies if a field is intended as a programming interface
+        type: boolean
+    patternProperties:
+      "^x-(?!zml)": true
+    additionalProperties: false
+
+  # ---------------------------------------------------------------------------- #
+  #                                Interpretation Object                         #
+  # ---------------------------------------------------------------------------- #
+
+  InterpretationObjectInteger:
+    description: Map to define alternative interpretations for the fields values
+    type: object
+    patternProperties:
+      "^0b[0-1]+":
+        type: string
+      "^0x[0-9A-Fa-f]+":
+        type: string
+      "^[1-9][0-9]*":
+        type: string
+      "default":
+        description: Default replacement to use when no other key matches
+        type: string
+    additionalProperties: false
+
+  InterpretationObjectString:
+    description: Map to define alternative interpretations for the fields values
+    type: object
+    patternProperties:
+      "default":
+        description: Default replacement to use when no other key matches
+        type: string
+    additionalProperties:
+      type: string
+
+  # ---------------------------------------------------------------------------- #
+  #                                 TripletObject                                #
+  # ---------------------------------------------------------------------------- #
+
+  TripletObject:
+    description: Marks the field defined by this Schema Object to be the offset value of a triplet
+    type: object
+    properties:
+      schema:
+        description: Reference to the Control Block Schema mapping the structure pointed to by the triplet
+        oneOf:
+          - $ref: "#/definitions/ReferenceObject"
+          - $ref: "#/definitions/NormalProperty"
+      length:
+        description: Reference to the field holding the length of each element pointed to by the triplet
+        $ref: "#/definitions/ReferenceObject"
+      number:
+        description: Reference to the field holding the number of elements pointed to by the triplet
+        $ref: "#/definitions/ReferenceObject"
+    required:
+      - schema
+
+  # ---------------------------------------------------------------------------- #
+  #                                ReferenceObject                               #
+  # ---------------------------------------------------------------------------- #
+
+  ReferenceObject:
+    type: object
+    properties:
+      $ref:
+        type: string
+        format: uri-reference
+    required:
+      - $ref
+    additionalProperties: false

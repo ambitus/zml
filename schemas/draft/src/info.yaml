@@ -1,0 +1,41 @@
+---
+#
+# Copyright Contributors to the Ambitus Project.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+definitions:
+  Info:
+    properties:
+      title:
+        type: string
+      summary:
+        type: string
+      description:
+        type: string
+      termsOfService:
+        type: string
+        format: uri
+      contact:
+        $ref: utils.yaml#/definitions/Contact
+      license:
+        $ref: utils.yaml#/definitions/License
+      version:
+        $ref: utils.yaml#/definitions/Semver
+      x-zml-macro-location:
+        type: string
+      x-zml-generator:
+        type: string
+      x-zml-generator-version:
+        $ref: utils.yaml#/definitions/Semver
+      x-zml-generation-date:
+        type: string
+        anyOf:
+          - format: date-time
+          - format: date
+    required:
+      - title
+      - version
+    patternProperties:
+      "^x-(?!zml)": true
+    additionalProperties: false

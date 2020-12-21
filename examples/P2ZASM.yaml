@@ -25,7 +25,7 @@ info:
       url: https://www.example.com/license-information
    version: 1.0.0
    x-zml-generator: plxmap-plx2zml
-   x-zml-generator-version: 0.8.00
+   x-zml-generator-version: 0.8.0
    x-zml-generation-date: 2020-12-15
 components:
    schemas:
@@ -153,7 +153,6 @@ components:
                            x-zml-bit-size: 1
                   P2Z_Bit32:
                      type: object
-                     format: bitfield
                      x-zml-offset: 4
                      x-zml-size: 4
                      properties:
@@ -179,8 +178,8 @@ components:
                                  x-zml-bit-size: 8
                         P2Z_Bit32C:
                            type: integer
-                           x-zml-bit-offset: 16
-                           x-zml-bit-size: 8
+                           x-zml-offset: 2
+                           x-zml-size: 1
                         P2Z_Bit32D:
                            type: object
                            format: bitfield
@@ -193,7 +192,6 @@ components:
                                  x-zml-bit-size: 1
                   P2Z_Bit64:
                      type: object
-                     format: bitfield
                      x-zml-offset: 8
                      x-zml-size: 8
                      properties:
@@ -470,7 +468,7 @@ components:
                      x-zml-offset: 0
                      x-zml-size: 8
                   P2Z_Override_T:
-                     type: string
+                     type: integer
                      format: uint64
                      description: >
                         Override of the type field

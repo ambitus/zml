@@ -1,0 +1,39 @@
+---
+#
+# Copyright Contributors to the Ambitus Project.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+definitions:
+  Semver:
+    type: string
+    pattern: "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+  Contact:
+    type: object
+    properties:
+      name:
+        type: string
+      url:
+        type: string
+        format: uri
+      email:
+        type: string
+        format: email
+    patternProperties:
+      "^x-(?!zml)": true
+    additionalProperties: false
+  License:
+    type: object
+    properties:
+      name:
+        type: string
+      identifier:
+        type: string
+      url:
+        type: string
+        format: uri
+    required:
+      - name
+    patternProperties:
+      "^x-(?!zml)": true
+    additionalProperties: false

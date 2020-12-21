@@ -1,0 +1,27 @@
+---
+#
+# Copyright Contributors to the Ambitus Project.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+$schema: https://json-schema.org/draft-07/schema#
+type: object
+properties:
+  zml:
+    $ref: utils.yaml#/definitions/Semver
+  info:
+    $ref: info.yaml#/definitions/Info
+  components:
+    type: object
+    properties:
+      schemas:
+        type: object
+        additionalProperties:
+          $ref: properties.yaml#/definitions/ControlBlock
+    patternProperties:
+      "^x-(?!zml)": true
+    additionalProperties: false
+required:
+  - zml
+  - info
+  - components
