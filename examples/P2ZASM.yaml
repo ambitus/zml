@@ -5,15 +5,16 @@ info:
       ZML Test Macro
    description: >
       Comment test:
-      quick brown fox jumps over the lazy dog.
-      quick brown fox jumps over the lazy dog.
-      quick brown fox jumps over the lazy dog.
-      quick brown fox jumps over the lazy dog.
-      quick brown fox jumps over the lazy dog.
-      quick brown fox jumps over the lazy dog.
-      quick brown fox jumps over the lazy dog.
-      quick brown fox jumps over the lazy dog.
-      quick brown fox jumps over the lazy dog.
+          quick brown fox jumps over the lazy dog.
+          quick brown fox jumps over the lazy dog.
+          quick brown fox jumps over the lazy dog.
+          quick brown fox jumps over the lazy dog.
+          quick brown fox jumps over the lazy dog.
+          quick brown fox jumps over the lazy dog.
+          quick brown fox jumps over the lazy dog.
+          quick brown fox jumps over the lazy dog.
+
+          quick brown fox jumps over the lazy dog.
    contact:
       name: "Example Corp."
       url: https://www.example.com/contact
@@ -25,10 +26,15 @@ info:
       url: https://www.example.com/license-information
    version: 1.0.0
    x-zml-generator: plxmap-plx2zml
-   x-zml-generator-version: 0.8.0
-   x-zml-generation-date: 2020-12-15
+   x-zml-generator-version: 0.8.5
+   x-zml-generation-date: 2021-03-04
 components:
    schemas:
+      #
+      #
+      #        P2ZASM sample P2Z Block
+      #
+      #
       P2Z:
          type: object
          description: >
@@ -464,14 +470,13 @@ components:
                      type: integer
                      format: stck
                      description: >
-                        Override of the format field
+                        Override of the format field with STCK
                      x-zml-offset: 0
                      x-zml-size: 8
                   P2Z_Override_T:
-                     type: integer
-                     format: uint64
+                     type: string
                      description: >
-                        Override of the type field
+                        Override of the type field with string
                      x-zml-offset: 8
                      x-zml-size: 8
                   P2Z_Reference1:
@@ -743,6 +748,11 @@ components:
                               type: string
                               x-zml-offset: 0
                               x-zml-size: 8
+      #
+      #
+      #        P2ZASM sample P2ZX Block
+      #
+      #
       P2ZX:
          type: object
          description: >
@@ -773,6 +783,11 @@ components:
                            type: string
                            x-zml-offset: 0
                            x-zml-size: 8
+      #
+      #
+      #        P2ZASM sample P2ZY Block
+      #
+      #
       P2ZY:
          type: object
          description: >
