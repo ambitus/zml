@@ -3,7 +3,7 @@
 * %DEACTIVATE P2ZASM_INCLUDED;
 * %IF P2ZASM_INCLUDED = '' %THEN
 * %DO;
-*/* Macro made bi-lingual on 21063. CBGEN compile date 20027         */
+*/* Macro made bi-lingual on 21303. CBGEN compile date 21138         */
 *% /*
          MACRO
          P2ZASM &DSECT=YES,&LIST=YES,&TITLE=YES,&P2Z=YES,&P2ZX=COND,   *
@@ -16,7 +16,7 @@
  TITLE                'P2ZASM  - ZML Test Macro                        *
                      '
 .P5                   ANOP
-**/ P2ZASM_1:;
+**/ ;
 */****START OF SPECIFICATIONS*****************************************/
 */*                                                                  */
 */*01* Proprietary statement:                                        */
@@ -43,7 +43,11 @@
 */*02*  offset: 0                                                    */
 */*02*  length: 8                                                    */
 */*                                                                  */
-*/*01* Size: undefined                                               */
+*/*01* Size:                                                         */
+*/*            P2Z   -- X'0A68' bytes                                */
+*/*            P2ZX  -- X'0010' bytes                                */
+*/*            P2ZY  -- X'0008' bytes                                */
+*/*            struc -- X'0010' bytes                                */
 */*                                                                  */
 */*01* Created by: n/a                                               */
 */*                                                                  */
@@ -76,15 +80,114 @@
                       PUSH  PRINT
                       PRINT OFF
 .P2                   ANOP
+*
+* ********************************************************************
+* * P2ZASM sample (Prolog)                                           *
+* *                                                                  *
+* * P2Z Prolog                                                       *
+* ********************************************************************
+* ********************************************************************
+* * Bit Constants                                                    *
+* ********************************************************************
+*
+*
+P2ZBit_0              EQU   B'0'   Value False
+P2ZBit_1              EQU   B'1'   Value True
+P2ZBit_8_1            EQU   B'00000000' Value '00000000'b = '00'x
+P2ZBit_8_2            EQU   B'00000001' Value '00000001'b = '01'x
+P2ZBit_8_3            EQU   B'10000000' Value '10000000'b = '80'x
+P2ZBit_8_4            EQU   B'11111111' Value '11111111'b = 'FF'x
+P2ZBit_15             EQU   B'010101010101010' Value                   *
+                                   '010101010101010'b = '2AAA'x
+P2ZBit_16             EQU   B'0101010101010101' Value                  *
+                                   '0101010101010101'b = '5555'x
+P2ZBit_32             EQU   B'01010101010101010101010101010101'
+*
+*                                      Value '55555555'x
+*
+P2ZBitHex1            EQU   X'00000000'
+P2ZBitHex2            EQU   X'80000000'
+P2ZBitChar1           EQU   X'40404040'
+P2ZBitChar2           EQU   X'C1C2C3C4'
+P2ZBitAscii1          EQU   X'20202020'
+P2ZBitAscii2          EQU   X'41424344'
+P2ZBitZero1           EQU   X'40404000'
+P2ZBitZero2           EQU   X'C1C2C300'
+P2ZBitNZero1          EQU   X'40404040'
+P2ZBitNZero2          EQU   X'C1C2C3C4'
+*
+* ********************************************************************
+* * Pointer Constants                                                *
+* ********************************************************************
+*
+*
+P2ZP24_0              EQU   0
+P2ZP24_1              EQU   986895
+P2ZP24_2              EQU   74565
+P2ZP24_3              EQU   16777215
+P2ZP31_0              EQU   0
+P2ZP31_1              EQU   252645135
+P2ZP31_2              EQU   19088743
+P2ZP31_3              EQU   2147483647
+P2ZP32_0              EQU   0
+P2ZP32_1              EQU   252645135
+P2ZP32_2              EQU   19088743
+P2ZP32_3              EQU   2147483647
+*
+* ********************************************************************
+* * Fixed Constants                                                  *
+* ********************************************************************
+*
+*
+P2ZF8_0               EQU   0      Constant value 0
+P2ZF8_1               EQU   1      Constant value 1
+P2ZF8_2               EQU   255    Constant value 255
+P2ZF15_0              EQU   0      Constant value 0
+P2ZF15_1              EQU   1      Constant value 1
+P2ZF15_2              EQU   32767  Constant value 32767
+P2ZF15_3              EQU   -1     Constant value -1
+P2ZF15_4              EQU   -32768 Constant value -32768
+P2ZF16_1              EQU   0      Constant value 0
+P2ZF16_2              EQU   1      Constant value 1
+P2ZF16_3              EQU   65535  Constant value 65535
+P2ZF31_0              EQU   0      Constant value 0
+P2ZF31_1              EQU   1      Constant value 1
+P2ZF31_2              EQU   2147483647
+P2ZF31_3              EQU   -1     Constant value -1
+P2ZF31_4              EQU   -2147483648
+P2ZF32_0              EQU   0      Constant value 0
+P2ZF32_1              EQU   1      Constant value 1
+P2ZF32_2              EQU   -1
+*
+* ********************************************************************
+* * Character Constants                                              *
+* ********************************************************************
+*
+*
+P2ZC1                 EQU   C'A'
+P2ZC8_0TO3            EQU   C'AbCd' This is the first 4-byte segment   *
+                                   of an 8-byte constant.
+P2ZC8_4TO7            EQU   C'EfGh' This is the second 4-byte segment  *
+                                   of an 8-byte constant.
+P2ZZC1                EQU   C'A '
+P2ZZC8_0TO3           EQU   C'AbCd' This is the first 4-byte segment   *
+                                   of an 8-byte constant.
+P2ZZC8_4TO7           EQU   C'EfG ' This is the second 4-byte segment  *
+                                   of an 8-byte constant.
+P2ZNC1                EQU   C'A'
+P2ZNC8_0TO3           EQU   C'AbCd' This is the first 4-byte segment   *
+                                   of an 8-byte constant.
+P2ZNC8_4TO7           EQU   C'EfGh' This is the second 4-byte segment  *
+                                   of an 8-byte constant.
                       AIF   ('&P2Z' EQ 'NO').L0002
                       AIF   ('&DSECT' EQ 'YES').L0003
                       AIF   ('&P2Z' NE 'YES').L0002
 .L0003                ANOP
 *
 *    *****************************************************************
-*    *                                                               *
-*    * P2ZASM sample P2Z Prologe                                     *
-*    *                                                               *
+*     P2ZASM sample
+*
+*     P2Z Block
 *    *****************************************************************
 *
 *
@@ -307,7 +410,7 @@ P2Z_Reference2        DS    A      31 bit pointer with a remote        *
 *      ***************************************************************
 *
 *
-P2Z_ZMLTag            DS    CL24   ZML tag test section
+P2Z_ZMLTag            DS    CL64   ZML tag test section
                       ORG   P2Z_ZMLTag
 P2Z_Triplet           DS    CL12   Triplet test section
                       ORG   P2Z_Triplet
@@ -319,9 +422,22 @@ P2Z_ProgrammingInterface DS CL8    Programming interface test section
                       ORG   P2Z_ProgrammingInterface
 P2Z_ProgrammingInterfaceF DS CL4   Set to false
 P2Z_ProgrammingInterfaceT DS CL4   Set to true
+P2Z_InternalUse       DS    CL8    Programming interface test section
+                      ORG   P2Z_InternalUse
+P2Z_InternalUseF      DS    CL4    Set to false
+P2Z_InternalUseT      DS    CL4    Set to true
 P2Z_ScalingFactor     DS    CL4    Scaling factor test section
                       ORG   P2Z_ScalingFactor
 P2Z_ScalingFactor1    DS    F      Scaling factor of 16
+P2Z_Duration          DS    CL24   Duration test section
+                      ORG   P2Z_Duration
+P2Z_DurationF         DS    CL8    Set to false
+P2Z_DurationT         DS    CL16   Set to true
+P2Z_Interpretation    DS    CL8    Duration test section
+                      ORG   P2Z_Interpretation
+P2Z_InterpretationA   DS    CL4    Use alpha interpretation
+P2Z_InterpretationB   DS    H      Use binary interpretation
+P2Z_InterpretationM   DS    H      Use mixed interpretation
 *
 *      ***************************************************************
 *      *                                                             *
@@ -381,11 +497,11 @@ P2Z_Len               EQU   *-P2Z
                       AIF   ('&P2ZX' NE 'YES').L0006
 .L0007                ANOP
 *
-*      ***************************************************************
-*      *                                                             *
-*      * P2ZASM sample P2ZX Block                                    *
-*      *                                                             *
-*      ***************************************************************
+*    *****************************************************************
+*     P2ZASM sample
+*
+*     P2ZX Block
+*    *****************************************************************
 *
 *
                       AIF   ('&DSECT' EQ 'YES').L0008
@@ -405,11 +521,11 @@ P2ZX_Len              EQU   *-P2ZX
                       AIF   ('&P2ZY' NE 'YES').L000A
 .L000B                ANOP
 *
-*      ***************************************************************
-*      *                                                             *
-*      * P2ZASM sample P2ZY Block                                    *
-*      *                                                             *
-*      ***************************************************************
+*    *****************************************************************
+*     P2ZASM sample
+*
+*     P2ZY Block
+*    *****************************************************************
 *
 *
                       AIF   ('&DSECT' EQ 'YES').L000C
@@ -442,7 +558,7 @@ struc_Len             EQU   *-struc
 .P4                   ANOP
 .P_EXIT               ANOP
                       MEND
-**/ P2ZASM_2:;
+**/ ;
 * %P2ZASM_INCLUDED = 'YES';
 * %DCL ZCBPRINT CHAR EXT;
 * %DEACTIVATE ZCBPRINT;
@@ -457,11 +573,104 @@ struc_Len             EQU   *-struc
 * %END;
 */* Start of PL/X Source                                             */
 *
-*   /*****************************************************************/
-*   /* P2ZASM sample                                                 */
-*   /*                                                               */
-*   /* P2Z Prologe                                                   */
-*   /*****************************************************************/
+* /*******************************************************************/
+* /* P2ZASM sample (Prolog)                                          */
+* /*                                                                 */
+* /* P2Z Prolog                                                      */
+* /*******************************************************************/
+*
+* /*******************************************************************/
+* /* Bit Constants                                                   */
+* /*******************************************************************/
+* Declare
+*   P2ZBit_0     Bit(1)  Constant('0'b), /* Value False              */
+*   P2ZBit_1     Bit(1)  Constant('1'b), /* Value True               */
+*   P2ZBit_8_1   Bit(8)  Constant('00000000'b), /* Value
+*                                 '00000000'b = '00'x                */
+*   P2ZBit_8_2   Bit(8)  Constant('00000001'b), /* Value
+*                                 '00000001'b = '01'x                */
+*   P2ZBit_8_3   Bit(8)  Constant('10000000'b), /* Value
+*                                 '10000000'b = '80'x                */
+*   P2ZBit_8_4   Bit(8)  Constant('11111111'b), /* Value
+*                                 '11111111'b = 'FF'x                */
+*   P2ZBit_15    Bit(15) Constant('010101010101010'b), /* Value
+*                                '010101010101010'b = '2AAA'x        */
+*   P2ZBit_16    Bit(16) Constant('0101010101010101'b), /* Value
+*                                 '0101010101010101'b = '5555'x      */
+*   P2ZBit_32    Bit(32)
+*                Constant('01010101010101010101010101010101'b), /*
+*                                      Value '55555555'x             */
+*
+*  P2ZBitHex1   Bit(32) Constant('00000000'x),
+*  P2ZBitHex2   Bit(32) Constant('80000000'x),
+*  P2ZBitChar1  Bit(32) Constant('    '),
+*  P2ZBitChar2  Bit(32) Constant('ABCD'),
+*  P2ZBitAscii1 Bit(32) Constant('    's),
+*  P2ZBitAscii2 Bit(32) Constant('ABCD's),
+*  P2ZBitZero1  Bit(32) Constant('   'z),
+*  P2ZBitZero2  Bit(32) Constant('ABC'z),
+*  P2ZBitNZero1 Bit(32) Constant('    'n),
+*  P2ZBitNZero2 Bit(32) Constant('ABCD'n);
+*
+* /*******************************************************************/
+* /* Pointer Constants                                               */
+* /*******************************************************************/
+* Declare
+*   P2ZP24_0     Pointer(24) Constant('000000'x),
+*   P2ZP24_1     Pointer(24) Constant('0F0F0F'x),
+*   P2ZP24_2     Pointer(24) Constant('012345'x),
+*   P2ZP24_3     Pointer(24) Constant('FFFFFF'x),
+*
+*   P2ZP31_0     Pointer(31) Constant('00000000'x),
+*   P2ZP31_1     Pointer(31) Constant('0F0F0F0F'x),
+*   P2ZP31_2     Pointer(31) Constant('01234567'x),
+*   P2ZP31_3     Pointer(31) Constant('7FFFFFFF'x),
+*
+*   P2ZP32_0     Pointer(32) Constant('00000000'x),
+*   P2ZP32_1     Pointer(32) Constant('0F0F0F0F'x),
+*   P2ZP32_2     Pointer(32) Constant('01234567'x),
+*   P2ZP32_3     Pointer(32) Constant('7FFFFFFF'x);
+*
+*/********************************************************************/
+*/* Fixed Constants                                                  */
+*/********************************************************************/
+* Declare
+*   P2ZF8_0      Fixed(8)  Constant(0),     /* Constant value 0      */
+*   P2ZF8_1      Fixed(8)  Constant(1),     /* Constant value 1      */
+*   P2ZF8_2      Fixed(8)  Constant(255),   /* Constant value 255    */
+*
+*   P2ZF15_0     Fixed(15) Constant(0),     /* Constant value 0      */
+*   P2ZF15_1     Fixed(15) Constant(1),     /* Constant value 1      */
+*   P2ZF15_2     Fixed(15) Constant(32767), /* Constant value 32767  */
+*   P2ZF15_3     Fixed(15) Constant(-1),    /* Constant value -1     */
+*   P2ZF15_4     Fixed(15) Constant(-32768),/* Constant value -32768 */
+*
+*   P2ZF16_1     Fixed(16) Constant(0),     /* Constant value 0      */
+*   P2ZF16_2     Fixed(16) Constant(1),     /* Constant value 1      */
+*   P2ZF16_3     Fixed(16) Constant(65535), /* Constant value 65535  */
+*
+*   P2ZF31_0     Fixed(31) Constant(0),     /* Constant value 0      */
+*   P2ZF31_1     Fixed(31) Constant(1),     /* Constant value 1      */
+*   P2ZF31_2     Fixed(31) Constant(2147483647),
+*   P2ZF31_3     Fixed(31) Constant(-1),    /* Constant value -1     */
+*   P2ZF31_4     Fixed(31) Constant(-2147483648),
+*
+*   P2ZF32_0     Fixed(32) Constant(0),     /* Constant value 0      */
+*   P2ZF32_1     Fixed(32) Constant(1),     /* Constant value 1      */
+*   P2ZF32_2     Fixed(32) Constant(4294967295);
+*
+* /*******************************************************************/
+* /* Character Constants                                             */
+* /*******************************************************************/
+* Declare
+*   P2ZC1        Char(1)   Constant('A'),
+*   P2ZC8        Char(8)   Constant('AbCdEfGh'),
+*
+*   P2ZZC1       Char(2)   Constant('A'z),
+*   P2ZZC8       Char(8)   Constant('AbCdEfG'z),
+*
+*   P2ZNC1       Char(1)   Constant('A'n),
+*   P2ZNC8       Char(8)   Constant('AbCdEfGh'n);
 *
 * Declare
 *   /*****************************************************************/
@@ -471,7 +680,7 @@ struc_Len             EQU   *-struc
 *   /*****************************************************************/
 *   1 P2Z   BASED BDY(DWord),       /* P2Z start
 *                                                                    */
-*     3 P2ZID    Char(8),           /* Control Block ID - "P2ZASM  " */
+*     3 P2ZID    Char(8),           /* Control Block ID - "P2ZASM "  */
 *
 *     /***************************************************************/
 *     /* Pointer                                                     */
@@ -639,14 +848,32 @@ struc_Len             EQU   *-struc
 *                                      section                       */
 *         7 P2Z_Triplet_Count  Fixed(32), /* Number of P2ZX
 *                                      sections                      */
-*       5 P2Z_ProgrammingInterface , /* Programming interface
+*       5 P2Z_ProgrammingInterface, /* Programming interface
 *                                      test section                  */
 *         7 P2Z_ProgrammingInterfaceF Char(4), /* Set to false
 *                                                                    */
 *         7 P2Z_ProgrammingInterfaceT Char(4), /* Set to true
 *                                                                    */
+*       5 P2Z_InternalUse,          /* Programming interface
+*                                      test section                  */
+*         7 P2Z_InternalUseF Char(4), /* Set to false
+*                                                                    */
+*         7 P2Z_InternalUseT Char(4), /* Set to true
+*                                                                    */
 *       5 P2Z_ScalingFactor,         /* Scaling factor test section  */
 *         7 P2Z_ScalingFactor1 Fixed(32), /* Scaling factor of 16
+*                                                                    */
+*       5 P2Z_Duration,             /* Duration test section         */
+*         7 P2Z_DurationF Char(8),  /* Set to false
+*                                                                    */
+*         7 P2Z_DurationT Char(16), /* Set to true
+*                                                                    */
+*       5 P2Z_Interpretation,       /* Duration test section         */
+*         7 P2Z_InterpretationA Char(4), /* Use alpha interpretation
+*                                                                    */
+*         7 P2Z_InterpretationB Fixed(16), /* Use binary interpretation
+*                                                                    */
+*         7 P2Z_InterpretationM Fixed(16), /* Use mixed interpretation
 *                                                                    */
 *
 *     /***************************************************************/
@@ -670,7 +897,7 @@ struc_Len             EQU   *-struc
 *     3 P2Z_Array Boundary(DWord),  /* Array test section            */
 *       5 P2Z_Array1(10),           /* Standard Array - 10 entries   */
 *         7 P2Z_Array1_Char8 Char(8),
-*       5 P2Z_Array2(5:10),          /* Lower bound is 5 - 5 entries */
+*       5 P2Z_Array2(5:10),         /* Lower bound is 5 - 5 entries  */
 *         7 P2Z_Array2_Char8 Char(8),
 *       5 P2Z_Array3(2,3),          /* Multi dimensional - 2x3       */
 *         7 P2Z_Array3_Char8 Char(8),
